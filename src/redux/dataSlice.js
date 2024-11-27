@@ -40,7 +40,6 @@ export const createData = createAsyncThunk(
 export const deleteData = createAsyncThunk(
   "data/deleteData",
   async (deletedId, { rejectWithValue }) => {
-
     try {
       const response = await fetch(
         `http://localhost:3000/api/cars/${deletedId}`,
@@ -61,6 +60,30 @@ export const deleteData = createAsyncThunk(
   }
 );
 
+export const updateData = createAsyncThunk(
+  "data/updatedata",
+  async (updatedCar, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/cars/${updatedCar._Id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedCar),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update");
+      }
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const dataSlice = createSlice({
   name: "cars",
   initialState: {
@@ -68,16 +91,19 @@ const dataSlice = createSlice({
     loading: false,
     error: null,
     success: false,
+    updatedId: null,
+    beingUpdated: false,
   },
-  
-  
+
   reducers: {
     resetSuccess: (state) => {
       state.success = false; // Reset the success field
     },
+    handleUpdatedId: (state, action) => {
+      state.updatedId = action.payload;
+      state.beingUpdated = true;
+    },
   },
-
-  
 
   extraReducers: (builder) => {
     builder
@@ -102,8 +128,6 @@ const dataSlice = createSlice({
         state.loading = false;
         state.data.push(action.payload);
         state.success = true;
-        console.log(state.success);
-        
       })
       .addCase(createData.rejected, (state, action) => {
         state.loading = false;
@@ -120,9 +144,21 @@ const dataSlice = createSlice({
       .addCase(deleteData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(updateData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(updateData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
 export default dataSlice.reducer;
-export const { resetSuccess } = dataSlice.actions;
+export const { resetSuccess, handleUpdatedId } = dataSlice.actions;
