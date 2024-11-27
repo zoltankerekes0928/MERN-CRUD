@@ -7,14 +7,17 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useDispatch } from "react-redux";
 import { deleteData } from "../redux/dataSlice";
-
+import { useNavigate } from "react-router-dom";
+import { handleUpdatedId } from "../redux/dataSlice";
 
 // eslint-disable-next-line react/prop-types
 const Cars = ({ data }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleUpdate = (event) => {
-    console.log(event.id);
+    dispatch(handleUpdatedId(event.id));
+    navigate("/taxis");
   };
 
   const handleDelete = (event) => {
