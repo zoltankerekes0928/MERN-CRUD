@@ -5,6 +5,7 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { createData, resetSuccess, updateData } from "../redux/dataSlice";
+import { useNavigate } from "react-router";
 
 import Alert from "@mui/material/Alert";
 import CheckIcon from "@mui/icons-material/Check";
@@ -13,6 +14,7 @@ import Typography from "@mui/material/Typography";
 // eslint-disable-next-line react/prop-types
 const CreatePage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { success, updatedId, beingUpdated, data } = useSelector(
     (state) => state.data
@@ -40,17 +42,19 @@ const CreatePage = () => {
       img: image,
     };
     dispatch(createData(newCar));
+    navigate("/home");
   };
 
   const handleUpdate = () => {
     const updatedCar = {
-      _id:updatedId,
+      _id: updatedId,
       name: carName,
       hourlyPrice: price,
       licenceNumber: licence,
       img: image,
     };
     dispatch(updateData(updatedCar));
+    navigate("/home");
   };
 
   const handleClose = () => {

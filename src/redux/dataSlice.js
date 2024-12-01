@@ -65,7 +65,7 @@ export const updateData = createAsyncThunk(
   async (updatedCar, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/cars/${updatedCar._Id}`,
+        `http://localhost:3000/api/cars/${updatedCar._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -152,6 +152,8 @@ const dataSlice = createSlice({
       .addCase(updateData.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
+        state.beingUpdated = false
+        state.updatedId = null
       })
       .addCase(updateData.rejected, (state, action) => {
         state.loading = false;
